@@ -130,4 +130,9 @@ public class PainelDesenho extends JPanel
 		// TODO Auto-generated method stub
 		
 	}
+
+	public ListaEncadeada<FormaGeometrica> getlista() {
+		
+		return listaFormaGeometrica;
+	}
 }

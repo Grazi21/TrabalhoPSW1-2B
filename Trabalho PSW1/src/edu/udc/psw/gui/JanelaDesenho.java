@@ -6,7 +6,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.border.EmptyBorder;
 
+import edu.udc.psw.colecao.Iterador;
+import edu.udc.psw.colecao.ListaEncadeada;
 import edu.udc.psw.modelo.Circulo;
+import edu.udc.psw.modelo.FormaGeometrica;
 import edu.udc.psw.modelo.Linha;
 import edu.udc.psw.modelo.Retangulo;
 import edu.udc.psw.modelo.Triangulo;
@@ -17,7 +20,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 public class JanelaDesenho extends JFrame {
@@ -109,49 +117,93 @@ public class JanelaDesenho extends JFrame {
 		menuBar.add(mnArquivo);
 		
 		JMenuItem mntmSalvar = new JMenuItem("Salvar");
-		mntmAbrir.addActionListener(new ActionListener() {
+		mntmSalvar.addActionListener(new ActionListener() {
 		
 			@Override
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser f = new JFileChooser();
-			f.setFileSectionMode(FILES_ONLY);
-			int res = f.showSaveDialog(null);
+			JFileChooser fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			int res = fc.showSaveDialog(null);
 			if(res==JFileChooser.CANCEL_OPTION)
 				return;
 			
 			File f = fc.getSelectedFile();
 			
 			if (!f.exists()) {
-                f.createNewFile();
+                try {
+					f.createNewFile();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
 			
 			// Prepara para escrever no arquivo
-            FileWriter f = new FileWriter(f.getAbsoluteFile());
-            BufferedWriter f = new BufferedWriter(f);
+            FileWriter fw = null;
+			try {
+				fw = new FileWriter(f.getAbsoluteFile());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+            BufferedWriter bw = new BufferedWriter(fw);
             
             // Escreve e fecha arquivo
-            bw.write(content);
-            bw.close();
+    		FormaGeometrica formaAux;   
+    		Iterador<FormaGeometrica> it = contentPane.getlista().getInicio();
+    		
+    		formaAux = it.getObjeto();
+    		while(formaAux != null) {
+    			//formaAux.getManipulador().paint(g);
+    			try {
+					bw.write(formaAux.toString());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+    			formaAux = it.proximo();
+    		}	
+
+    		
+            try {
+				bw.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 	}});
 		mnArquivo.add(mntmSalvar);
 		
 		JMenuItem mntmAbrir = new JMenuItem("Abrir ");
+		mntmAbrir.addActionListener(new ActionListener() {
+			
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser f = new JFileChooser();
-			f.setFileSectionMode(FILES_ONLY);
-			int res = f.OpenSaveDialog(null);
+			JFileChooser fc = new JFileChooser();
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			int res = fc.showSaveDialog(null);
 			if(res==JFileChooser.CANCEL_OPTION)
 				return;
 			
 		File f = fc.getSelectedFile();
 		
-		FileReader ler = new FileReader("Dados");
+		FileReader ler = null;
+		try {
+			ler = new FileReader(f);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         BufferedReader reader = new BufferedReader(ler);  
         String linha;
-        while( (linha = reader.readLine()) != null ){
-            System.out.println(linha);
-        }
+        try {
+			while( (linha = reader.readLine()) != null ){
+			    System.out.println(linha);
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		mnArquivo.add(mntmAbrir);
 		}});	
 }
