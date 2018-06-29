@@ -17,7 +17,7 @@ public class Circulo implements FormaGeometrica {
 	public double area() {
 		area = 3.141516*raio*raio;
         
-        return area;;
+        return area;
 	}
 
 	@Override

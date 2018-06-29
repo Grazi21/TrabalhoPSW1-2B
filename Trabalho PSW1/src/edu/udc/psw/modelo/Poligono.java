@@ -1,7 +1,7 @@
 package edu.udc.psw.modelo;
 
 public class Poligono {
-	// tarefa -> não foi feito
+	
 	
 	private Ponto2D pontos[] = new Ponto2D[10];
 	private int lados;
